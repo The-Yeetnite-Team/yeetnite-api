@@ -1,0 +1,5 @@
+# Sensitive keys
+api/v3/inc/config.php
+
+# Self-signed SSL Certificates
+certs**

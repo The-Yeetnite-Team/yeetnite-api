@@ -1,1 +1,1 @@
-# yeetnite-api
+# Yeetnite PHP API
