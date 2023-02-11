@@ -1,0 +1,8 @@
+RewriteEngine on
+
+RewriteRule ^api/v3/account/api/public/account/displayName/(.*)\.php$ /api/v3/fortnite/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L]
+RewriteRule ^api/v3/account/api/public/account/(.*)\.php$ /api/v3/fortnite/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L]
+
+RewriteRule ^api/v3/friends/api/public/friends/(.*)/(.*)\.php$ /api/v3/account/api/public/friends.php?account_id_1=$1&account_id_2=$2
+
+RewriteRule ^api/v3/fortnite/api/cloudstorage/system/(.*)\.ini\.php$ /FNConfigs/$1.ini
