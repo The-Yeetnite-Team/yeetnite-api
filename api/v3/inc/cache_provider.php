@@ -2,7 +2,7 @@
 require_once 'config.php';
 
 class CacheProvider {
-    private $cache_provider;
+    private Memcached $cache_provider;
 
     public function __construct() {
         $this->cache_provider = new Memcached();
@@ -14,6 +14,10 @@ class CacheProvider {
         // we presumably have a server connection
         // let's add some default keys that we know we'll need
         foreach (DEFAULT_MEMCACHED_KEYS as $key => $value) {
+            if (str_starts_with($value, "file|")) {
+                $value = file_get_contents(explode("file|", $value)[1], true);
+            }
+
             $this->cache_provider->set($key, $value);
         }
     }
@@ -22,7 +26,10 @@ class CacheProvider {
         return $this->cache_provider->get($key);
     }
 
-    public function set(string $key, string $value) {
-        return $this->cache_provider->set($key, $value);
+    public function set(string $key, string $value): void
+    {
+        $this->cache_provider->set($key, $value);
     }
 }
+
+$cache_provider = new CacheProvider();

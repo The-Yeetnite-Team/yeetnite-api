@@ -60,7 +60,7 @@ if (isset($_GET['fullAccountInfo'])) {
             'tfaEnabled' => false
         )
     );
-    $cache_provider->set("full_user_data:{$_GET["accountId"]}", $data);
+    $cache_provider->set("full_user_data:{$_GET['accountId']}", $data);
     echo $data;
 } else {
     if (substr_count($_SERVER['QUERY_STRING'], 'accountId') > 1) {

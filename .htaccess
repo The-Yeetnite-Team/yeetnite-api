@@ -6,3 +6,6 @@ RewriteRule ^api/v3/account/api/public/account/(.*)\.php$ /api/v3/fortnite/accou
 RewriteRule ^api/v3/friends/api/public/friends/(.*)/(.*)\.php$ /api/v3/account/api/public/friends.php?account_id_1=$1&account_id_2=$2
 
 RewriteRule ^api/v3/fortnite/api/cloudstorage/system/(.*)\.ini\.php$ /FNConfigs/$1.ini
+
+RewriteRule ^api/v3/fortnite/api/cloudstorage/user/(.*)/ClientSettings\.Sav\.php$ /api/v3/fortnite/api/cloudstorage/user.php?accountId=$1
+RewriteRule ^api/v3/fortnite/api/cloudstorage/user/(.*)\.php$ /api/v3/fortnite/api/cloudstorage/user.php?accountId=$1&fileInfo=1
