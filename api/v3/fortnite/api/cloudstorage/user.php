@@ -1,12 +1,7 @@
 <?php
-// TODO add caching for client settings
-require_once 'bootstrap.php';
-
-// we need this for Carbon
-set_include_path($_SERVER['DOCUMENT_ROOT']);
-require 'vendor/autoload.php';
-
-use Carbon\Carbon;
+require_once 'database.php';
+require_once 'cache_provider.php';
+require_once 'lib/date_utils.php';
 
 if (!isset($_GET['accountId'])) {
     header('Content-Type: application/json');
@@ -39,9 +34,9 @@ if (isset($_GET['fileInfo'])) {
 } else {
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'PUT':
-            $client_settings = file_get_contents("php://input"); // raw version
+            $client_settings = file_get_contents('php://input'); // raw version
             $client_settings_sav = base64_encode(gzdeflate($client_settings, 9)); // version stored in database
-            $client_settings_last_updated = Carbon::now()->toIso8601ZuluString('millisecond');
+            $client_settings_last_updated = current_zulu_time();
             $database->update('users', array('clientSettings', 'clientSettingsLastUpdated'), array($client_settings_sav, $client_settings_last_updated), "WHERE username = '{$_GET['accountId']}'");
             // Update fileInfo cache
             $cache_provider->set("client_settings_file_info:{$_GET['accountId']}", client_settings_file_info($client_settings, $client_settings_last_updated));
@@ -84,7 +79,7 @@ function client_settings_file_info($client_settings, $last_updated): string {
         "hash256" => hash('sha256', $client_settings),
         "length" => strlen($client_settings),
         "contentType" => "application/octet-stream",
-        "uploaded" => $last_updated, // close enough to when it was uploaded
+        "uploaded" => $last_updated,
         "storageType" => "S3",
         "doNotCache" => true
     ));

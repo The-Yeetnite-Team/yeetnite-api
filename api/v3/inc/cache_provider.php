@@ -11,14 +11,17 @@ class CacheProvider {
             return;
         }
 
-        // we presumably have a server connection
-        // let's add some default keys that we know we'll need
-        foreach (DEFAULT_MEMCACHED_KEYS as $key => $value) {
-            if (str_starts_with($value, "file|")) {
-                $value = file_get_contents(explode("file|", $value)[1], true);
-            }
+        // only add cache entries if they haven't been added
+        if (!file_exists(__DIR__ . '/cached.true')) {
+            // we are going to refresh our cache, so set the special marker
+            touch(__DIR__ . '/cached.true');
+            foreach (DEFAULT_MEMCACHED_KEYS as $key => $value) {
+                if (str_starts_with($value, 'file|')) {
+                    $value = file_get_contents(substr_replace($value, '', 0, 5), true);
+                }
 
-            $this->cache_provider->set($key, $value);
+                $this->cache_provider->set($key, $value);
+            }
         }
     }
 

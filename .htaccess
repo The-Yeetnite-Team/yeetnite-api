@@ -1,11 +1,26 @@
 RewriteEngine on
 
-RewriteRule ^api/v3/account/api/public/account/displayName/(.*)\.php$ /api/v3/fortnite/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L]
-RewriteRule ^api/v3/account/api/public/account/(.*)\.php$ /api/v3/fortnite/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L]
-RewriteRule ^api/v3/friends/api/public/friends/(.*)/(.*)\.php$ /api/v3/account/api/public/friends.php?account_id_1=$1&account_id_2=$2
-RewriteRule ^api/v3/fortnite/api/cloudstorage/system/(.*)\.ini\.php$ /FNConfigs/$1.ini
-RewriteRule ^api/v3/fortnite/api/cloudstorage/user/(.*)/ClientSettings\.Sav\.php$ /api/v3/fortnite/api/cloudstorage/user.php?accountId=$1
-RewriteRule ^api/v3/fortnite/api/cloudstorage/user/(.*)\.php$ /api/v3/fortnite/api/cloudstorage/user.php?accountId=$1&fileInfo=1
-RewriteRule ^api/v3/fortnite/api/game/v2/matchmaking/account/(.*)/session/(.*)\.php$ /api/v3/fortnite/api/game/v2/matchmaking/account/session.php?accountId=$1&sessionId=$2
-RewriteRule ^api/v3/fortnite/api/game/v2/matchmakingservice/ticket/player/(.*)\.php$ /api/v3/fortnite/api/game/v2/matchmakingservice/ticket/player.php?accountId=$1
-RewriteRule ^api/v3/fortnite/api/game/v2/privacy/account/(.*)\.php$ /api/v3/fortnite/api/game/v2/privacy/account.php?accountId=$1
+RewriteRule ^api/v3/account/api/public/account/displayName/(.*)\.php$ /api/v3/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L,QSA]
+RewriteRule ^api/v3/account/api/public/account/(.*)\.php$ /api/v3/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L,QSA]
+RewriteRule ^api/v3/friends/api/public/friends/(.*)/(.*)\.php$ /api/v3/account/api/public/friends.php?account_id_1=$1&account_id_2=$2 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/cloudstorage/system/(.*)\.ini\.php$ /FNConfigs/$1.ini [QSA]
+RewriteRule ^api/v3/fortnite/api/cloudstorage/user/(.*)/ClientSettings\.Sav.*$ /api/v3/fortnite/api/cloudstorage/user.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/cloudstorage/user/(.*)\.php$ /api/v3/fortnite/api/cloudstorage/user.php?accountId=$1&fileInfo=1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/matchmaking/account/(.*)/session/(.*)\.php$ /api/v3/fortnite/api/game/v2/matchmaking/account/session.php?accountId=$1&sessionId=$2 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/matchmakingservice/ticket/player/(.*)\.php$ /api/v3/fortnite/api/game/v2/matchmakingservice/ticket/player.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/privacy/account/(.*)\.php$ /api/v3/fortnite/api/game/v2/privacy/account.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/ClaimLoginReward.*$ /api/v3/fortnite/api/game/v2/profile/ClaimLoginReward.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/ClientQuestLogin.*$ /api/v3/fortnite/api/game/v2/profile/ClientQuestLogin.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/EquipBattleRoyaleCustomization\.php$ /api/v3/fortnite/api/game/v2/profile/EquipBattleRoyaleCustomization.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/GetMcpTimeForLogin.*$ /api/v3/fortnite/api/game/v2/profile/GetMcpTimeForLogin.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/IncrementNamedCounterStat\.php$ /api/v3/fortnite/api/game/v2/profile/IncrementNamedCounterStat.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/MarkNewQuestNotificationSent\.php$ /api/v3/fortnite/api/game/v2/profile/MarkNewQuestNotificationSent.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/RefreshExpeditions\.php$ /api/v3/fortnite/api/game/v2/profile/RefreshExpeditions.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/SetBattleRoyaleBanner\.php$ /api/v3/fortnite/api/game/v2/profile/SetBattleRoyaleBanner.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/SetMtxPlatform\.php$ /api/v3/fortnite/api/game/v2/profile/SetMtxPlatform.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/QueryProfile\.php$ /api/v3/fortnite/api/game/v2/profile/QueryProfile.php?accountId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/matchmaking/session/.*/join\.php$ /api/v3/fortnite/api/matchmaking/session/join.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/matchmaking/session/findPlayer/.*\.php$ /api/v3/fortnite/api/matchmaking/session/findPlayer.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/matchmaking/session/(.*)\.php$ /api/v3/fortnite/api/matchmaking/session.php?sessionId=$1 [L,QSA]
+RewriteRule ^api/v3/fortnite/api/receipts/v1/account/.*/receipts\.php$ /api/v3/fortnite/api/receipts/v1/account/receipts.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/v2/versioncheck/.*\.php$ /api/v3/fortnite/api/v2/versioncheck.php [L,QSA]

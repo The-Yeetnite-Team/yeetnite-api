@@ -1,5 +1,6 @@
 <?php
-require_once 'bootstrap.php';
+require_once 'database.php';
+require_once 'cache_provider.php';
 
 header('Content-Type: application/json');
 
@@ -25,17 +26,12 @@ else if ($_POST['grant_type'] === 'password' && isset($_POST['username']) && iss
 
     // User failed authentication
     if (!$user_data || !password_verify($_POST['password'], $user_data[0]['password'])) {
-        echo json_encode(
-            array(
-                'success' => false,
-                'reason' => 'Invalid username or password'
-            )
-        );
+        echo '{"success":false,"reason":"Invalid username or password"}';
         return;
     }
 
     // Username and password are valid
-    generate_token_data($_POST['username'], $user_data[0]['accessToken']);
+    echo generate_token_data($_POST['username'], $user_data[0]['accessToken']);
 }
 // User used the auto-login feature in the launcher or a token through launch arguments
 else if ($_POST['grant_type'] === 'external_auth' && isset($_POST['external_auth_token']) && $_POST['token_type'] === 'eg1') {
@@ -43,12 +39,7 @@ else if ($_POST['grant_type'] === 'external_auth' && isset($_POST['external_auth
 
     // The Auth Token the client supplied doesn't exist
     if (!$user_data) {
-        echo json_encode(
-            array(
-                'success' => false,
-                'reason' => 'Invalid Auth Token during automatic login'
-            )
-        );
+        echo '{"success":false,"reason":"Invalid Auth Token during automatic login"}';
         return;
     }
 
@@ -57,8 +48,8 @@ else if ($_POST['grant_type'] === 'external_auth' && isset($_POST['external_auth
 }
 
 // Print out the user's token data
-function generate_token_data(string $username, string $accessToken) {
-    echo json_encode(
+function generate_token_data(string $username, string $accessToken): string {
+    return json_encode(
         array(
             'access_token' => $accessToken,
             'expires_in' => 28800,

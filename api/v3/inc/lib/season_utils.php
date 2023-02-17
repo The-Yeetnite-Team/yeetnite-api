@@ -34,7 +34,7 @@ function fortnite_version_info(string $user_agent) {
 
         $value = explode('.', $build_id);
         if (count($value) === 3) {
-            $build_id = "{$value[0]}.{$value[1]}{$value[2]}";
+            $build_id = "$value[0].$value[1]$value[2]";
         }
 
         $res['season'] = intval(explode('.', $build_id)[0]);
@@ -47,7 +47,7 @@ function fortnite_version_info(string $user_agent) {
     } catch (Exception) {
         $res['season'] = 2;
         $res['build_id'] = 2.0;
-        $res['lobby'] = "LobbyWinterDecor";
+        $res['lobby'] = 'LobbyWinterDecor';
     }
 
     return $res;

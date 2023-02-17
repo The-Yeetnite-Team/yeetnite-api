@@ -1,24 +1,19 @@
 <?php
-require_once 'bootstrap.php';
+require_once 'database.php';
+require_once 'cache_provider.php';
 require_once 'lib/season_utils.php';
-
-// we need this for Carbon
-set_include_path($_SERVER['DOCUMENT_ROOT']);
-require 'vendor/autoload.php';
-
-use Carbon\Carbon;
+require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
 
 if (isset($_GET['fullAccountInfo'])) {
-    $current_zulu_time = Carbon::now()->toIso8601ZuluString('millisecond');
+    $current_zulu_time = current_zulu_time();
 
     // huge time savings if we find user data in cache
     $user_data = $cache_provider->get("full_user_data:{$_GET["accountId"]}");
     if ($user_data) {
         // Update user's last login time and return cached data
-        $user_data = preg_replace('/[0-9]+-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\.[0-9]+Z/i', $current_zulu_time, $user_data);
-        echo $user_data;
+        echo strtr($user_data, array('"lastLogin":""' => "\"lastLogin\":\"$current_zulu_time\""));
         return;
     }
 
@@ -43,35 +38,34 @@ if (isset($_GET['fullAccountInfo'])) {
     }
 
     $user_data = $user_data[0];
-    $data = json_encode(
-        array(
-            'id' => $_GET['accountId'],
-            'displayName' => $_GET['accountId'],
-            'name' => 'placeholder',
-            'lastName' => 'placeholder',
-            'email' => $user_data['email'],
-            'failedLoginAttempts' => 0,
-            'lastLogin' => $current_zulu_time,
-            'numberOfDisplayNameChanges' => 0,
-            'ageGroup' => 'UNKNOWN',
-            'headless' => false,
-            'country' => 'US',
-            'preferredLanguage' => $user_data['preferredLanguage'],
-            'tfaEnabled' => false
-        )
+    $data = array(
+        'id' => $_GET['accountId'],
+        'displayName' => $_GET['accountId'],
+        'name' => 'placeholder',
+        'lastName' => 'placeholder',
+        'email' => $user_data['email'],
+        'failedLoginAttempts' => 0,
+        'lastLogin' => $current_zulu_time,
+        'numberOfDisplayNameChanges' => 0,
+        'ageGroup' => 'UNKNOWN',
+        'headless' => false,
+        'country' => 'US',
+        'preferredLanguage' => $user_data['preferredLanguage'],
+        'tfaEnabled' => false
     );
-    $cache_provider->set("full_user_data:{$_GET['accountId']}", $data);
-    echo $data;
+    echo json_encode($data);
+    $data['lastLogin'] = ''; // faster to replace empty string in cache than using preg_replace()
+    $cache_provider->set("full_user_data:{$_GET['accountId']}", json_encode($data));
 } else {
     if (substr_count($_SERVER['QUERY_STRING'], 'accountId') > 1) {
-        $version_info = fortnite_version_info($_SERVER["HTTP_USER_AGENT"]);
+        $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);
         $usernames = explode('&', strtr($_SERVER['QUERY_STRING'], array('accountId=' => '')));
         if ($version_info['season'] < 6) {
             echo json_encode(
                 array(array(
-                    "id" => $usernames,
-                    "displayName" => $usernames,
-                    "externalAuths" => new stdClass()
+                    'id' => $usernames,
+                    'displayName' => $usernames,
+                    'externalAuths' => new stdClass()
                 ))
             );
         } else {

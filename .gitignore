@@ -4,9 +4,10 @@ api/v3/inc/config.php
 # Self-signed SSL Certificates
 certs**
 
-# Composer-installable dependencies
-vendor**
-
 # PHPStorm unneeded files
 .idea/workspace.xml
 .idea/tasks.xml
+.idea/dataSources**
+
+# API temporary files when in use
+api/v3/inc/cached.true

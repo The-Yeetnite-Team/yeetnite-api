@@ -1,11 +1,7 @@
 <?php
-require_once 'bootstrap.php';
-
-// we need this for Carbon
-set_include_path($_SERVER['DOCUMENT_ROOT']);
-require 'vendor/autoload.php';
-
-use Carbon\Carbon;
+require_once 'database.php';
+require_once 'cache_provider.php';
+require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
 
@@ -15,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // User is sending a friend request
     if (!$pendingFriendRequest) {
-        $created = Carbon::now()->toIso8601ZuluString('millisecond');
+        $created = current_zulu_time();
 
         $database->insert('friendRequests', array('ownerAccountId', 'accountId', 'created'), array("'{$_GET['account_id_1']}'", "'{$_GET['account_id_2']}'", "'$created'"));
         http_response_code(204);
@@ -32,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // User can't accept their own friend request
     if ($pendingFriendRequest['ownerAccountId'] === $_GET['account_id_1']) {
         http_response_code(400);
-        echo $cache_provider->get('friend_request_error_self_accept');
+        echo '{"success":false,"reason":"You can\'t accept your own friend request"}';
         return;
     }
 
@@ -46,25 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user2 = ($i == 0) ? $_GET['account_id_2'] : $_GET['account_id_1'];
 
         $body = array(
-            "command" => array(
-                "node" => "roster-fixer",
-                "fields" => array(
+            'command' => array(
+                'node' => 'roster-fixer',
+                'fields' => array(
                     array(
-                        "var" => "roster-owner-jid",
-                        "value" => "$user1@xmpp.yeetnite.ml" // ${i == 0 ? req.query.accountId1 : req.query.accountId2}
+                        'var' => 'roster-owner-jid',
+                        'value' => "$user1@xmpp.yeetnite.ml"
                     ),
                     array(
-                        "var" => "roster-action",
-                        "value" => "update"
+                        'var' => 'roster-action',
+                        'value' => 'update'
                     ),
                     array(
-                        "var" => "roster-buddy-list",
-                        "value" => "$user2@xmpp.yeetnite.ml"
+                        'var' => 'roster-buddy-list',
+                        'value' => "$user2@xmpp.yeetnite.ml"
                     )
                 )
             )
         );
-        array_push($bodies, $body);
+        $bodies[] = $body;
     }
 
     $header_keys = array("Content-Type", "Authorization");
@@ -103,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             )
         );
 
-        array_push($bodies, $body);
+        $bodies[] = $body;
     }
 
     $header_keys = array("Content-Type", "Authorization");
@@ -121,7 +117,7 @@ function find_existing_friend_request($account_id_1, $account_id_2, $database)
     return $database->select(array('accountId', 'ownerAccountId', 'friendRequest_id', 'status'), 'friendRequests', $condition);
 }
 
-function tigase_multi_web_request(string $url, array $bodies, array $header_keys, array $header_values)
+function tigase_multi_web_request(string $url, array $bodies, array $header_keys, array $header_values): void
 {
     $ch1 = curl_init($url);
     $ch2 = curl_init($url);
@@ -153,7 +149,7 @@ function tigase_multi_web_request(string $url, array $bodies, array $header_keys
     curl_multi_close($mh);
 }
 
-function assoc_header_to_http($key, $value)
+function assoc_header_to_http($key, $value): string
 {
     return "$key: $value";
 }
