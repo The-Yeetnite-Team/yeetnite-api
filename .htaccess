@@ -24,3 +24,6 @@ RewriteRule ^api/v3/fortnite/api/matchmaking/session/findPlayer/.*\.php$ /api/v3
 RewriteRule ^api/v3/fortnite/api/matchmaking/session/(.*)\.php$ /api/v3/fortnite/api/matchmaking/session.php?sessionId=$1 [L,QSA]
 RewriteRule ^api/v3/fortnite/api/receipts/v1/account/.*/receipts\.php$ /api/v3/fortnite/api/receipts/v1/account/receipts.php [L,QSA]
 RewriteRule ^api/v3/fortnite/api/v2/versioncheck/.*\.php$ /api/v3/fortnite/api/v2/versioncheck.php [L,QSA]
+RewriteRule ^api/v3/friends/api/v1/.*/settings\.php$ /api/v3/friends/api/v1/settings.php [L,QSA]
+RewriteRule ^api/v3/friends/api/public/list/fortnite/.*/recentPlayers\.php$ /api/v3/friends/api/public/list/fortnite/recentPlayers.php [L,QSA]
+RewriteRule ^api/v3/friends/api/public/friends/(.*)\.php$ /api/v3/friends/api/public/friends.php?accountId=$1 [L,QSA]
