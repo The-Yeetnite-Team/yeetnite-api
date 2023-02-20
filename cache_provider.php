@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'api-config.php';
 
 class CacheProvider {
     private Memcached $cache_provider;

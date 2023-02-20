@@ -47,11 +47,17 @@ if (isset($_GET['fullAccountInfo'])) {
         'failedLoginAttempts' => 0,
         'lastLogin' => $current_zulu_time,
         'numberOfDisplayNameChanges' => 0,
-        'ageGroup' => 'UNKNOWN',
+        'ageGroup' => 'ADULT',
         'headless' => false,
         'country' => 'US',
         'preferredLanguage' => $user_data['preferredLanguage'],
-        'tfaEnabled' => false
+        'tfaEnabled' => false,
+        'canUpdateDisplayName' => false,
+        'emailVerified' => true,
+        'minorVerified' => false,
+        'minorExpected' => false,
+        'minorStatus' => 'NOT_MINOR',
+        'cabinedMode' => false
     );
     echo json_encode($data);
     $data['lastLogin'] = ''; // faster to replace empty string in cache than using preg_replace()
@@ -65,7 +71,10 @@ if (isset($_GET['fullAccountInfo'])) {
                 array(array(
                     'id' => $usernames,
                     'displayName' => $usernames,
-                    'externalAuths' => new stdClass()
+                    'minorVerified' => false,
+                    'externalAuths' => new stdClass(),
+                    'minorStatus' => 'NOT_MINOR',
+                    'cabinedMode' => false
                 ))
             );
         } else {
@@ -76,13 +85,16 @@ if (isset($_GET['fullAccountInfo'])) {
     }
 }
 
-function generate_minimal_account_info(string $username)
+function generate_minimal_account_info(string $username): string
 {
     return json_encode(
         array(
             'id' => $username,
             'displayName' => $username,
-            'externalAuths' => new stdClass()
+            'minorVerified' => false,
+            'externalAuths' => new stdClass(),
+            'minorStatus' => 'NOT_MINOR',
+            'cabinedMode' => false
         )
     );
 }

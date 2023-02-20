@@ -4,7 +4,9 @@ require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
 
-$_POST = json_decode(file_get_contents('php://input'), true);
+if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
+    $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+else parse_str(file_get_contents('php://input'), $_POST);
 
 define('RVN', intval($_GET['rvn']));
 

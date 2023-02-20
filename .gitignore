@@ -1,5 +1,5 @@
 # Sensitive keys
-api/v3/inc/config.php
+api-config.php
 
 # Self-signed SSL Certificates
 certs**
@@ -10,4 +10,4 @@ certs**
 .idea/dataSources**
 
 # API temporary files when in use
-api/v3/inc/cached.true
+cached.true

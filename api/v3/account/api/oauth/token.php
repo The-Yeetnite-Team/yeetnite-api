@@ -4,51 +4,56 @@ require_once 'cache_provider.php';
 
 header('Content-Type: application/json');
 
-$_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
+    $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+else parse_str(file_get_contents('php://input'), $_POST);
 
-// Client wants temporary token (pre-login)
-if (!isset($_POST['grant_type'])) {
-    echo json_encode(
-        array(
-            'access_token' => substr(str_shuffle(MD5(microtime())), 0, 16),
-            'client_id' => 'yeetniteclientlol',
-            'client_service' => 'fortnite',
-            'expires_at' => '9999-12-02T01:12:00Z',
-            'expires_in' => 28800,
-            'internal_client' => true,
-            'token_type' => 'bearer'
-        )
-    );
+switch ($_POST['grant_type']) {
+    // user logged in through the in-game login screen
+    case 'password':
+        $user_data = $database->select(array('password', 'accessToken'), 'users', "WHERE username='{$_POST['username']}'");
+
+        // User failed authentication
+        if (!$user_data || !password_verify($_POST['password'], $user_data[0]['password'])) {
+            echo '{"success":false,"reason":"Invalid username or password"}';
+            return;
+        }
+
+        // Username and password are valid
+        echo generate_token_data($_POST['username'], $user_data[0]['accessToken']);
+        break;
+    // User used the auto-login feature in the launcher or a token through launch arguments
+    case 'external_auth':
+        $user_data = $database->select(array('username'), 'users', "WHERE accessToken='{$_POST['external_auth_token']}'");
+
+        // The Auth Token the client supplied doesn't exist
+        if (!$user_data) {
+            echo '{"success":false,"reason":"Invalid Auth Token during automatic login"}';
+            return;
+        }
+
+        // The Auth Token the client supplied is linked to a valid user
+        echo generate_token_data($user_data[0]['username'], $_POST['external_auth_token']);
+        break;
+    default:
+        echo json_encode(
+            array(
+                'access_token' => substr(str_shuffle(MD5(microtime())), 0, 16),
+                'client_id' => 'yeetniteclientlol',
+                'client_service' => 'prod-fn',
+                'expires_at' => '9999-12-02T01:12:00Z',
+                'expires_in' => 28800,
+                'internal_client' => true,
+                'token_type' => 'bearer',
+                'product_id' => 'prod-fn'
+            )
+        );
+        break;
 }
-// User logged in through the in-game login screen
-else if ($_POST['grant_type'] === 'password' && isset($_POST['username']) && isset($_POST['password']) && $_POST['token_type'] === 'eg1') {
-    $user_data = $database->select(array('password', 'accessToken'), 'users', "WHERE username='{$_POST['username']}'");
 
-    // User failed authentication
-    if (!$user_data || !password_verify($_POST['password'], $user_data[0]['password'])) {
-        echo '{"success":false,"reason":"Invalid username or password"}';
-        return;
-    }
-
-    // Username and password are valid
-    echo generate_token_data($_POST['username'], $user_data[0]['accessToken']);
-}
-// User used the auto-login feature in the launcher or a token through launch arguments
-else if ($_POST['grant_type'] === 'external_auth' && isset($_POST['external_auth_token']) && $_POST['token_type'] === 'eg1') {
-    $user_data = $database->select(array('username'), 'users', "WHERE accessToken='{$_POST['external_auth_token']}'");
-
-    // The Auth Token the client supplied doesn't exist
-    if (!$user_data) {
-        echo '{"success":false,"reason":"Invalid Auth Token during automatic login"}';
-        return;
-    }
-
-    // The Auth Token the client supplied is linked to a valid user
-    generate_token_data($user_data[0]['username'], $_POST['external_auth_token']);
-}
-
-// Print out the user's token data
-function generate_token_data(string $username, string $accessToken): string {
+// Generate user's token data
+function generate_token_data(string $username, string $accessToken): string
+{
     return json_encode(
         array(
             'access_token' => $accessToken,

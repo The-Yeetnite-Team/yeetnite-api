@@ -4,7 +4,9 @@ require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
 
-$_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
+    $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+else parse_str(file_get_contents('php://input'), $_POST);
 
 define('PROFILE_REVISION', intval($_GET['rvn']));
 define('LOCKER_ITEM_NAME', strtolower($_POST['slotName']));

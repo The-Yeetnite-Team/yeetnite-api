@@ -5,7 +5,6 @@ require_once 'lib/friend_utils.php';
 
 header('Content-Type: application/json');
 
-// TODO add caching to this endpoint
 $friends_list_cache = $cache_provider->get("friend_list:{$_GET['accountId']}");
 
 if ($friends_list_cache) {

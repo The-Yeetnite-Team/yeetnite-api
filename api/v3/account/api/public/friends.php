@@ -162,6 +162,8 @@ function tigase_multi_web_request(string $url, array $bodies, array $header_keys
     curl_multi_add_handle($mh, $ch2);
 
     // execute all queries simultaneously and continue when all are complete
+
+    // TODO fix time limit exceeded on unfriend (30s)
     $running = null;
     do {
         curl_multi_exec($mh, $running);
@@ -177,6 +179,7 @@ function assoc_header_to_http($key, $value): string
     return "$key: $value";
 }
 
-function user_pair_exists($user1, $user2, Database $database) {
+function user_pair_exists($user1, $user2, Database $database): bool
+{
     return count($database->select(array('user_id'), 'users', "WHERE username IN ('$user1', '$user2')")) === 2;
 }
