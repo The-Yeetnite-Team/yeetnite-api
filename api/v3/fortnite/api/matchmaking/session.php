@@ -3,6 +3,8 @@ require_once 'database.php';
 require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
+// no opportunity for caching
+header('X-Litespeed-Cache-Control: no-store');
 
 $session_info = $database->select(
     array(

@@ -7,6 +7,7 @@ require_once 'lib/date_utils.php';
 header('Content-Type: application/json');
 
 if (isset($_GET['fullAccountInfo'])) {
+    header("X-LiteSpeed-Tag: fullAccountInfo/{$_GET["accountId"]}");
     $current_zulu_time = current_zulu_time();
 
     // huge time savings if we find user data in cache

@@ -4,6 +4,9 @@ require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
 
+// no opportunity for caching
+header('X-Litespeed-Cache-Control: no-store');
+
 if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
     $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
 else parse_str(file_get_contents('php://input'), $_POST);
@@ -23,6 +26,8 @@ if (IS_INDEXED_ITEM) {
 
 $database->update('locker', array('favorite_' . LOCKER_ITEM_NAME), array($profile_changes),
     "WHERE user_id IN (SELECT user_id FROM users WHERE username = '{$_GET['accountId']}')");
+
+header("X-LiteSpeed-Purge: private, tag=fullAccountInfo/{$_GET['accountId']}");
 
 echo json_encode(array(
     'profileRevision' => PROFILE_REVISION + 1,

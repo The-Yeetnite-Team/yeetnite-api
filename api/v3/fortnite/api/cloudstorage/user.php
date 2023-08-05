@@ -3,8 +3,11 @@ require_once 'database.php';
 require_once 'cache_provider.php';
 require_once 'lib/date_utils.php';
 
+header('Content-Type: application/json');
+// client settings should always be fresh
+header('X-Litespeed-Cache-Control: no-store');
+
 if (!isset($_GET['accountId'])) {
-    header('Content-Type: application/json');
     http_response_code(400);
     echo json_encode(array(
         'success' => false,
@@ -14,8 +17,6 @@ if (!isset($_GET['accountId'])) {
 }
 
 if (isset($_GET['fileInfo'])) {
-    header('Content-Type: application/json');
-
     // Try to find file info in cache
     $client_settings_info = $cache_provider->get("client_settings_file_info:{$_GET['accountId']}");
     if ($client_settings_info) {

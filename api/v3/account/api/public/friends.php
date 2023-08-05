@@ -7,6 +7,9 @@ require_once 'lib/friend_utils.php';
 
 header('Content-Type: application/json');
 
+// no potential for cache to exist when managing friend requests
+header('X-Litespeed-Cache-Control: no-store');
+
 if ($_GET['account_id_1'] === $_GET['account_id_2']) {
     echo '{"success":false,"reason":"You can\'t execute a friend request on yourself"}';
     http_response_code(400);
@@ -31,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $database->insert('friendRequests', array('ownerAccountId', 'accountId', 'created'), array("'{$_GET['account_id_1']}'", "'{$_GET['account_id_2']}'", "'$created'"));
         update_friend_list_caches($_GET['account_id_1'], $_GET['account_id_2'], $cache_provider, $database);
 
+        header("X-LiteSpeed-Purge: private, tag=friendsList/{$_GET['account_id_1']}, tag=friendsList/{$_GET['account_id_2']}");
+
         http_response_code(204);
         return;
     }
@@ -52,6 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // User is accepting a friend request
     $database->update('friendRequests', array('status'), array('ACCEPTED'), "WHERE friendRequest_id = {$pendingFriendRequest['friendRequest_id']}");
+
+    header("X-LiteSpeed-Purge: private, tag=friendsList/{$_GET['account_id_1']}, tag=friendsList/{$_GET['account_id_2']}");
 
     // Add each other to the XMPP roster
     $bodies = array();
@@ -89,6 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     http_response_code(204);
 } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    header("X-LiteSpeed-Purge: private, tag=friendsList/{$_GET['account_id_1']}, tag=friendsList/{$_GET['account_id_2']}");
+
     $to_delete_id = find_existing_friend_request($_GET['account_id_1'], $_GET['account_id_2'], $database)[0]['friendRequest_id'];
     $database->delete('friendRequests', "friendRequest_id = $to_delete_id");
 

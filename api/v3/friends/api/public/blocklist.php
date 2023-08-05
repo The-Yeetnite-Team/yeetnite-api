@@ -5,9 +5,14 @@ header('Content-Type: application/json');
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
+        header("X-LiteSpeed-Tag: blockList/{$_GET['accountId']}");
         echo getBlockList($_GET['accountId'], $database);
         break;
     case 'POST':
+        // no opportunity to cache
+        header('X-Litespeed-Cache-Control: no-store');
+        header("X-LiteSpeed-Purge: private, tag=blockList/{$_GET['accountId']}");
+
         // block user
         $blockList = json_decode(getBlockList($_GET['accountId'], $database), true);
         // we don't want duplicates
@@ -18,6 +23,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
         // TODO unfriend from database and XMPP server
         break;
     case 'DELETE':
+        // no opportunity to cache
+        header('X-Litespeed-Cache-Control: no-store');
+        header("X-LiteSpeed-Purge: private, tag=blockList/{$_GET['accountId']}");
+
         // unblock user
         $blockList = json_decode(getBlockList($_GET['accountId'], $database), true);
         unset($blockList[array_search($_GET['blocking'], $blockList)]);

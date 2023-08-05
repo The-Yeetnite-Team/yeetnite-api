@@ -11,6 +11,7 @@ define('CREATED_LAST_LOGIN', $database->select(array('created', 'lastLogin'), 'u
 
 switch ($_GET['profileId']) {
     case 'athena':
+        header("X-LiteSpeed-Tag: queryProfileAthena/{$_GET['accountId']}");
         $athena_profile = $cache_provider->get('fortnite_api_game_v2_profile_athena');
         $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);
         $locker_data = $database->select(
@@ -40,7 +41,6 @@ switch ($_GET['profileId']) {
         )[0];
 
         //! These offsets will have to be changed if the file changes
-
         // first doesn't need strpos() because file is unchanged initially
         $athena_profile = substr_replace($athena_profile, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', 142, 12);
         $athena_profile = substr_replace($athena_profile, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', strpos($athena_profile, '"updated":""', 155), 12);

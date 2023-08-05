@@ -4,6 +4,7 @@ require_once 'cache_provider.php';
 require_once 'lib/friend_utils.php';
 
 header('Content-Type: application/json');
+header("X-LiteSpeed-Tag: friendsList/{$_GET['accountId']}");
 
 $friends_list_cache = $cache_provider->get("friend_list:{$_GET['accountId']}");
 

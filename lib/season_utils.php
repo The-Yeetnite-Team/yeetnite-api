@@ -1,6 +1,7 @@
 <?php
 
-function fortnite_version_info(string $user_agent) {
+function fortnite_version_info(string $user_agent): array
+{
     $res = array(
         'season' => 0,
         'build_id' => 0.0,
