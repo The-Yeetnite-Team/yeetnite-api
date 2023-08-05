@@ -4,8 +4,8 @@ require_once 'cache_provider.php';
 
 header('Content-Type: application/json');
 
-// a user could change their password, we don't wan't to cache the old password
-header('Cache-Control: no-store', TRUE);
+// a user could change their password, we don't want to cache the old password
+header('Cache-Control: no-store');
 header('X-Litespeed-Cache-Control: no-cache');
 
 if (!isset($_GET['username']) || !isset($_GET['password'])) {
