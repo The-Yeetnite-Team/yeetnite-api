@@ -8,82 +8,119 @@ header('Content-Type: application/json');
 
 define('SERVER_TIME', current_zulu_time());
 define('CREATED_LAST_LOGIN', $database->select(array('created', 'lastLogin'), 'users', "WHERE username = '{$_GET['accountId']}'")[0]);
+define('RVN', intval($_GET['rvn']) ?? -1);
 
 switch ($_GET['profileId']) {
     case 'athena':
         header("X-LiteSpeed-Tag: queryProfileAthena/{$_GET['accountId']}");
-        $athena_profile = $cache_provider->get('fortnite_api_game_v2_profile_athena');
-        $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);
-        $locker_data = $database->select(
-            array(
-                'banner_icon',
-                'banner_color',
-                'favorite_victorypose',
-                'favorite_consumableemote',
-                'favorite_callingcard',
-                'favorite_character',
-                'favorite_spray',
-                'favorite_loadingscreen',
-                'favorite_hat',
-                'favorite_battlebus',
-                'favorite_mapmarker',
-                'favorite_vehicledeco',
-                'favorite_backpack',
-                'favorite_dance',
-                'favorite_skydivecontrail',
-                'favorite_pickaxe',
-                'favorite_glider',
-                'favorite_musicpack',
-                'favorite_itemwrap'
-            ),
-            'locker',
-            "WHERE user_id IN (SELECT user_id FROM users WHERE username = '{$_GET['accountId']}')"
-        )[0];
+        switch (RVN) {
+            case -1:
+                $athena_profile = $cache_provider->get('fortnite_api_game_v2_profile_athena');
+                $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);
+                $locker_data = $database->select(
+                    array(
+                        'banner_icon',
+                        'banner_color',
+                        'favorite_victorypose',
+                        'favorite_consumableemote',
+                        'favorite_callingcard',
+                        'favorite_character',
+                        'favorite_spray',
+                        'favorite_loadingscreen',
+                        'favorite_hat',
+                        'favorite_battlebus',
+                        'favorite_mapmarker',
+                        'favorite_vehicledeco',
+                        'favorite_backpack',
+                        'favorite_dance',
+                        'favorite_skydivecontrail',
+                        'favorite_pickaxe',
+                        'favorite_glider',
+                        'favorite_musicpack',
+                        'favorite_itemwrap'
+                    ),
+                    'locker',
+                    "WHERE user_id IN (SELECT user_id FROM users WHERE username = '{$_GET['accountId']}')"
+                )[0];
 
-        //! These offsets will have to be changed if the file changes
-        // first doesn't need strpos() because file is unchanged initially
-        $athena_profile = substr_replace($athena_profile, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', 142, 12);
-        $athena_profile = substr_replace($athena_profile, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', strpos($athena_profile, '"updated":""', 155), 12);
-        $athena_profile = substr_replace($athena_profile, "\"accountId\":\"{$_GET['accountId']}\"", strpos($athena_profile, '"accountId":""', 191), 14);
-        $athena_profile = substr_replace($athena_profile, "\"season_num\":{$version_info['season']}", strpos($athena_profile, '"season_num":-1', -800), 15);
-        $athena_profile = substr_replace($athena_profile, "\"banner_icon\":\"{$locker_data['banner_icon']}\"", strpos($athena_profile, '"banner_icon":""', -167), 16);
-        $athena_profile = substr_replace($athena_profile, "\"banner_color\":\"{$locker_data['banner_color']}\"", strpos($athena_profile, '"banner_color":""', -739), 17);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_victorypose\":\"{$locker_data['favorite_victorypose']}\"", strpos($athena_profile, '"favorite_victorypose":""', -934), 25);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_consumableemote\":\"{$locker_data['favorite_consumableemote']}\"", strpos($athena_profile, '"favorite_consumableemote":""', -769), 29);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_callingcard\":\"{$locker_data['favorite_callingcard']}\"", strpos($athena_profile, '"favorite_callingcard":""', -721), 25);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_character\":\"{$locker_data['favorite_character']}\"", strpos($athena_profile, '"favorite_character":""', -695), 23);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_spray\":{$locker_data['favorite_spray']}", strpos($athena_profile, '"favorite_spray":[]', -671), 19);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_loadingscreen\":\"{$locker_data['favorite_loadingscreen']}\"", strpos($athena_profile, '"favorite_loadingscreen":""', -637), 27);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_hat\":\"{$locker_data['favorite_hat']}\"", strpos($athena_profile, '"favorite_hat":""', -569), 17);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_battlebus\":\"{$locker_data['favorite_battlebus']}\"", strpos($athena_profile, '"favorite_battlebus":""', -539), 23);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_mapmarker\":\"{$locker_data['favorite_mapmarker']}\"", strpos($athena_profile, '"favorite_mapmarker":""', -515), 23);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_vehicledeco\":\"{$locker_data['favorite_vehicledeco']}\"", strpos($athena_profile, '"favorite_vehicledeco":""', -491), 25);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_backpack\":\"{$locker_data['favorite_backpack']}\"", strpos($athena_profile, '"favorite_backpack":""', -446), 22);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_dance\":{$locker_data['favorite_dance']}", strpos($athena_profile, '"favorite_dance":[]', -406), 19);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_skydivecontrail\":\"{$locker_data['favorite_skydivecontrail']}\"", strpos($athena_profile, '"favorite_skydivecontrail":""', -334), 29);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_pickaxe\":\"{$locker_data['favorite_pickaxe']}\"", strpos($athena_profile, '"favorite_pickaxe":""', -304), 21);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_glider\":\"{$locker_data['favorite_glider']}\"", strpos($athena_profile, '"favorite_glider":""', -282), 20);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_musicpack\":\"{$locker_data['favorite_musicpack']}\"", strpos($athena_profile, '"favorite_musicpack":""', -176), 23);
-        $athena_profile = substr_replace($athena_profile, "\"favorite_itemwraps\":{$locker_data['favorite_itemwrap']}", strpos($athena_profile, '"favorite_itemwraps":[]', -115), 23);
+                //! These offsets will have to be changed if the file changes
+                // TODO somehow manage to use substr_replace for all of them (strtr is quite slow in comparison)
+                // first doesn't need strpos() because file is unchanged initially
+                $athena_profile = substr_replace($athena_profile, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', 1, 12);
+                $athena_profile = substr_replace($athena_profile, "\"accountId\":\"{$_GET['accountId']}\"", -1751020, 14);
+                $athena_profile = substr_replace($athena_profile, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', -102399, 12);
+                $athena_profile = substr_replace($athena_profile, "\"season_num\":{$version_info['season']}", -691, 15);
 
-        echo $athena_profile;
+                $athena_profile = strtr(
+                    $athena_profile,
+                    array(
+                        '"banner_icon":""' => "\"banner_icon\":\"{$locker_data['banner_icon']}\"",
+                        '"banner_color":""' => "\"banner_color\":\"{$locker_data['banner_color']}\"",
+                        '"favorite_consumableemote":""' => "\"favorite_consumableemote\":\"{$locker_data['favorite_consumableemote']}\"",
+                        '"favorite_character":""' => "\"favorite_character\":\"{$locker_data['favorite_character']}\"",
+                        '"favorite_spray":[]' => "\"favorite_spray\":{$locker_data['favorite_spray']}",
+                        '"favorite_loadingscreen":""' => "\"favorite_loadingscreen\":\"{$locker_data['favorite_loadingscreen']}\"",
+                        '"favorite_hat":""' => "\"favorite_hat\":\"{$locker_data['favorite_hat']}\"",
+                        '"favorite_vehicledeco":""' => "\"favorite_vehicledeco\":\"{$locker_data['favorite_vehicledeco']}\"",
+                        '"favorite_backpack":""' => "\"favorite_backpack\":\"{$locker_data['favorite_backpack']}\"",
+                        '"favorite_dance":[]' => "\"favorite_dance\":{$locker_data['favorite_dance']}",
+                        '"favorite_skydivecontrail":""' => "\"favorite_skydivecontrail\":\"{$locker_data['favorite_skydivecontrail']}\"",
+                        '"favorite_pickaxe":""' => "\"favorite_pickaxe\":\"{$locker_data['favorite_pickaxe']}\"",
+                        '"favorite_glider":""' => "\"favorite_glider\":\"{$locker_data['favorite_glider']}\"",
+                        '"favorite_musicpack":""' => "\"favorite_musicpack\":\"{$locker_data['favorite_musicpack']}\"",
+                        '"favorite_itemwraps":[]' => "\"favorite_itemwraps\":{$locker_data['favorite_itemwrap']}"
+                    )
+                );
+
+                echo $athena_profile;
+                break;
+            default:
+                echo json_encode(array(
+                    'profileRevision' => 17306,
+                    'profileId' => 'athena',
+                    'profileChangesBaseRevision' => 17306,
+                    'profileChanges' => array(),
+                    'profileCommandRevision' => RVN,
+                    'serverTime' => SERVER_TIME,
+                    'responseVersion' => 1
+                ));
+                break;
+        }
         break;
     case 'common_core':
-        $common_core = $cache_provider->get('fortnite_api_game_v2_profile_common_core');
+        switch (RVN) {
+            case -1:
+                $common_core = $cache_provider->get('fortnite_api_game_v2_profile_common_core');
 
-        $common_core = substr_replace($common_core, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', 145, 12);
-        $common_core = substr_replace($common_core, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', strpos($common_core, '"updated":""', 158), 12);
-        $common_core = substr_replace($common_core, '"accountId":"' . $_GET['accountId'] . '"', strpos($common_core, '"accountId":""', 196), 14);
+                $common_core = substr_replace($common_core, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', 1, 12);
+                $common_core = substr_replace($common_core, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', -39138, 12);
+                $common_core = substr_replace($common_core, "\"accountId\":\"{$_GET['accountId']}\"", -39102, 14);
 
-        echo $common_core;
+                echo $common_core;
+                break;
+            default:
+                echo json_encode(array(
+                    'profileRevision' => 2409,
+                    'profileId' => 'common_core',
+                    'profileChangesBaseRevision' => 2409,
+                    'profileChanges' => [],
+                    'profileCommandRevision' => RVN,
+                    'serverTime' => SERVER_TIME,
+                    'responseVersion' => 1
+                ));
+                break;
+        }
         break;
     case 'common_public':
+        $banner_info = $database->select(array('banner_icon', 'banner_color'), 'locker', "WHERE user_id IN (SELECT user_id FROM users WHERE username = '{$_GET['accountId']}')")[0];
+
         $common_public = $cache_provider->get('fortnite_api_game_v2_profile_common_public');
 
-        $common_public = substr_replace($common_public, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', 143, 12);
-        $common_public = substr_replace($common_public, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', strpos($common_public, '"updated":""', 156), 12);
-        $common_public = substr_replace($common_public, "\"accountId\":\"{$_GET['accountId']}\"", strpos($common_public, '"accountId":""', 192), 14);
-        $common_public = substr_replace($common_public, "\"homebase_name\":\"{$_GET['accountId']}\"", strpos($common_public, '"homebase_name":""', 323), 18);
+        $common_public = substr_replace($common_public, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', -291, 12);
+        $common_public = substr_replace($common_public, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', -278, 12);
+        $common_public = substr_replace($common_public, "\"banner_color\": \"{$banner_info['banner_color']}\"", -142, 17);
+        $common_public = substr_replace($common_public, "\"banner_icon\": \"{$banner_info['banner_icon']}\"", -105, 16);
+        $common_public = substr_replace($common_public, '"serverTime":"' . SERVER_TIME . '"', -36, 15);
 
         echo $common_public;
         break;
@@ -95,6 +132,36 @@ switch ($_GET['profileId']) {
         $profile0 = substr_replace($profile0, "\"accountId\":\"{$_GET['accountId']}\"", strpos($profile0, '"accountId":""', 234), 14);
 
         echo $profile0;
+        break;
+    case 'creative':
+        echo json_encode(array(
+            'profileRevision' => 203,
+            'profileId' => 'creative',
+            'profileChangesBaseRevision' => 203,
+            'profileChanges' => array(
+                array(
+                    'changeType' => 'fullProfileUpdate',
+                    'profile' => array(
+                        '_id' => $_GET['accountId'],
+                        'created' => CREATED_LAST_LOGIN['created'],
+                        'updated' => CREATED_LAST_LOGIN['lastLogin'],
+                        'rvn' => 203,
+                        'wipeNumber' => 11,
+                        'accountId' => $_GET['accountId'],
+                        'profileId' => 'creative',
+                        'version' => 'ensure_project_ids_october_2021',
+                        'items' => new stdClass(),
+                        'stats' => array(
+                            'attributes' => new stdClass()
+                        ),
+                        'commandRevision' => 197
+                    )
+                )
+            ),
+            'profileCommandRevision' => 197,
+            'serverTime' => '',
+            'responseVersion' => 1
+        ));
         break;
     case 'collection_book_people0':
         $collection_book_people0 = $cache_provider->get('fortnite_api_game_v2_profile_collection_book_people0');
@@ -117,7 +184,6 @@ switch ($_GET['profileId']) {
         echo $collection_book_schematics0;
         break;
     case 'campaign':
-        define('RVN', intval($_GET['rvn']));
         echo json_encode(array(
             'profileRevision' => RVN,
             'profileId' => 'campaign',
@@ -180,4 +246,15 @@ switch ($_GET['profileId']) {
             'responseVersion' => 1
         ));
         break;
+    case 'collections':
+        $collections = $cache_provider->get('fortnite_api_game_v2_profile_collections');
+        $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);
+
+        $collections = substr_replace($collections, '"created":"' . CREATED_LAST_LOGIN['created'] . '"', 186, 12);
+        $collections = substr_replace($collections, '"updated":"' . CREATED_LAST_LOGIN['lastLogin'] . '"', -556, 12);
+        $collections = substr_replace($collections, "\"accountId\":\"{$_GET['accountId']}\"", -518, 14);
+        $collections = substr_replace($collections, "\"current_season\":{$version_info['season']}", -111, 18);
+        $collections = substr_replace($collections, '"serverTime":"' . SERVER_TIME, -36, 14); // not sure why no ending quote is needed here :(
+
+        echo $collections;
 }

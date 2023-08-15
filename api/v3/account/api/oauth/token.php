@@ -8,9 +8,7 @@ header('Content-Type: application/json');
 header('Cache-Control: no-store', TRUE);
 header('X-Litespeed-Cache-Control: no-cache');
 
-if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
-    $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
-else parse_str(file_get_contents('php://input'), $_POST);
+parse_str(file_get_contents('php://input'), $_POST);
 
 switch ($_POST['grant_type']) {
     // user logged in through the in-game login screen
@@ -40,18 +38,7 @@ switch ($_POST['grant_type']) {
         echo generate_token_data($user_data[0]['username'], $_POST['external_auth_token']);
         break;
     default:
-        echo json_encode(
-            array(
-                'access_token' => substr(str_shuffle(MD5(microtime())), 0, 16),
-                'client_id' => 'yeetniteclientlol',
-                'client_service' => 'prod-fn',
-                'expires_at' => '9999-12-02T01:12:00Z',
-                'expires_in' => 28800,
-                'internal_client' => true,
-                'token_type' => 'bearer',
-                'product_id' => 'prod-fn'
-            )
-        );
+        echo generate_token_data('Yeetnite', substr(str_shuffle(MD5(microtime())), 0, 16));
         break;
 }
 
@@ -68,7 +55,7 @@ function generate_token_data(string $username, string $accessToken): string
             'refresh_expires' => 28800,
             'refresh_expires_at' => '9999-12-02T01:12:00Z',
             'account_id' => $username,
-            'client_id' => 'yeetniteclientlol',
+            'client_id' => 'yeetnite-client',
             'internal_client' => true,
             'client_service' => 'fortnite',
             'device_id' => 'yeetnitedeviceidlol',

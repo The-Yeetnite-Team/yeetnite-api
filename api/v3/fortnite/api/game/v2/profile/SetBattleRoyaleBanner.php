@@ -6,9 +6,7 @@ header('Content-Type: application/json');
 // no opportunity for caching
 header('X-Litespeed-Cache-Control: no-store');
 
-if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
-    $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
-else parse_str(file_get_contents('php://input'), $_POST);
+$_POST = json_decode(file_get_contents('php://input'), true) ?? array();
 
 define('RVN', intval($_GET['rvn']));
 

@@ -1,3 +1,3 @@
 <?php
 header('Content-Type: application/json');
-echo '{}';
+echo '["unrealengine.com","unrealtournament.com","fortnite.com","epicgames.com"]';

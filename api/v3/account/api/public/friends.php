@@ -3,7 +3,6 @@ require_once 'database.php';
 require_once 'cache_provider.php';
 require_once 'lib/date_utils.php';
 require_once 'lib/friend_utils.php';
-require_once 'lib/friend_utils.php';
 
 header('Content-Type: application/json');
 
@@ -25,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Pending requests likely means that user wants to accept a friend request
-    $pendingFriendRequest = find_existing_friend_request($_GET['account_id_1'], $_GET['account_id_2'], $database);
+    $pendingFriendRequest = get_friend_request($_GET['account_id_1'], $_GET['account_id_2'], $database);
 
     // User is sending a friend request
     if (!$pendingFriendRequest) {
@@ -61,134 +60,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("X-LiteSpeed-Purge: private, tag=friendsList/{$_GET['account_id_1']}, tag=friendsList/{$_GET['account_id_2']}");
 
     // Add each other to the XMPP roster
-    $bodies = array();
-    for ($i = 0; $i < 2; $i++) {
-        $user1 = ($i == 0) ? $_GET['account_id_1'] : $_GET['account_id_2'];
-        $user2 = ($i == 0) ? $_GET['account_id_2'] : $_GET['account_id_1'];
-
-        $body = array(
-            'command' => array(
-                'node' => 'roster-fixer',
-                'fields' => array(
-                    array(
-                        'var' => 'roster-owner-jid',
-                        'value' => "$user1@xmpp.yeetnite.ml"
-                    ),
-                    array(
-                        'var' => 'roster-action',
-                        'value' => 'update'
-                    ),
-                    array(
-                        'var' => 'roster-buddy-list',
-                        'value' => "$user2@xmpp.yeetnite.ml"
-                    )
-                )
-            )
-        );
-        $bodies[] = $body;
-    }
-
-    $header_keys = array("Content-Type", "Authorization");
-    $header_values = array("application/json", TIGASE_HTTP_AUTHORIZATION);
-    tigase_multi_web_request('https://xmpp.yeetnite.ml:1443/rest/adhoc/sess-man@xmpp.yeetnite.ml?api-key=' . TIGASE_API_KEY, $bodies, $header_keys, $header_values);
-
+    update_xmpp_friendship($_GET['account_id_1'], $_GET['account_id_2'], true);
     update_friend_list_caches($_GET['account_id_1'], $_GET['account_id_2'], $cache_provider, $database);
 
     http_response_code(204);
 } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     header("X-LiteSpeed-Purge: private, tag=friendsList/{$_GET['account_id_1']}, tag=friendsList/{$_GET['account_id_2']}");
 
-    $to_delete_id = find_existing_friend_request($_GET['account_id_1'], $_GET['account_id_2'], $database)[0]['friendRequest_id'];
-    $database->delete('friendRequests', "friendRequest_id = $to_delete_id");
-
-    $bodies = array();
-
-    // Remove friend from XMPP roster
-    for ($i = 0; $i < 2; $i++) {
-        $user1 = ($i == 0) ? $_GET['account_id_1'] : $_GET['account_id_2'];
-        $user2 = ($i == 0) ? $_GET['account_id_2'] : $_GET['account_id_1'];
-
-        $body = array(
-            "command" => array(
-                "node" => "roster-fixer",
-                "fields" => array(
-                    array(
-                        "var" => "roster-owner-jid",
-                        "value" => "$user1@xmpp.yeetnite.ml"
-                    ),
-                    array(
-                        "var" => "roster-action",
-                        "value" => "remove"
-                    ),
-                    array(
-                        "var" => "roster-buddy-list",
-                        "value" => "$user2@xmpp.yeetnite.ml"
-                    )
-                )
-            )
-        );
-
-        $bodies[] = $body;
-    }
-
-    $header_keys = array("Content-Type", "Authorization");
-    $header_values = array("application/json", TIGASE_HTTP_AUTHORIZATION);
-    tigase_multi_web_request('https://xmpp.yeetnite.ml:1443/rest/adhoc/sess-man@xmpp.yeetnite.ml?api-key=' . TIGASE_API_KEY, $bodies, $header_keys, $header_values);
-
+    unfriend($_GET['account_id_1'], $_GET['account_id_2'], $database, $cache_provider);
+    unfriend($_GET['account_id_1'], $_GET['account_id_2'], $database, $cache_provider);
     update_friend_list_caches($_GET['account_id_1'], $_GET['account_id_2'], $cache_provider, $database);
 
     http_response_code(204);
-}
-
-function find_existing_friend_request($account_id_1, $account_id_2, $database)
-{
-    $condition = <<<EOL
-    WHERE (accountId = '$account_id_1' AND ownerAccountId = '$account_id_2')
-    OR (accountId = '$account_id_2' AND ownerAccountId = '$account_id_1')
-    EOL;
-    return $database->select(array('accountId', 'ownerAccountId', 'friendRequest_id', 'status'), 'friendRequests', $condition);
-}
-
-function tigase_multi_web_request(string $url, array $bodies, array $header_keys, array $header_values): void
-{
-    $ch1 = curl_init($url);
-    $ch2 = curl_init($url);
-
-    $headers = array_map('assoc_header_to_http', $header_keys, $header_values);
-
-    curl_setopt($ch1, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch1, CURLOPT_POST, 1);
-    curl_setopt($ch1, CURLOPT_POSTFIELDS, json_encode($bodies[0]));
-    curl_setopt($ch1, CURLOPT_HTTPHEADER, $headers);
-
-    curl_setopt($ch2, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch2, CURLOPT_POST, 1);
-    curl_setopt($ch2, CURLOPT_POSTFIELDS, json_encode($bodies[1]));
-    curl_setopt($ch2, CURLOPT_HTTPHEADER, $headers);
-
-    $mh = curl_multi_init();
-    curl_multi_add_handle($mh, $ch1);
-    curl_multi_add_handle($mh, $ch2);
-
-    // execute all queries simultaneously and continue when all are complete
-
-    // TODO fix time limit exceeded on unfriend (30s)
-    $running = null;
-    do {
-        curl_multi_exec($mh, $running);
-    } while ($running);
-
-    curl_multi_remove_handle($mh, $ch1);
-    curl_multi_remove_handle($mh, $ch2);
-    curl_multi_close($mh);
-}
-
-function assoc_header_to_http($key, $value): string
-{
-    return "$key: $value";
-}
-
-function user_pair_exists($user1, $user2, Database $database): bool
-{
-    return count($database->select(array('user_id'), 'users', "WHERE username IN ('$user1', '$user2')")) === 2;
 }

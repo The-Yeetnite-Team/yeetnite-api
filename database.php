@@ -5,7 +5,7 @@ class Database {
     protected PDO $connection;
 
     public function __construct() {
-        $this->connection = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_PERSISTENT => true));
+        $this->connection = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4', DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_PERSISTENT => true));
     }
 
     private function expand_values($beginning, $values, $ending): string
@@ -46,6 +46,17 @@ class Database {
     public function delete(string $table, string $condition, $additional_params=''): bool {
         $stmt = $this->connection->prepare("DELETE FROM $table WHERE $condition $additional_params;");
         return $stmt->execute();
+    }
+
+    public function raw(string $query, bool $returns_data): array|bool {
+        $stmt = $this->connection->prepare($query);
+        $status = $stmt->execute();
+        if (!$returns_data) return $status;
+
+        // query failed
+        if (!$status) return false;
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 

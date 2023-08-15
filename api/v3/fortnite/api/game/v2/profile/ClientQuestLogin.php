@@ -13,11 +13,11 @@ switch($_GET['profileId']) {
     case 'campaign':
         define('RVN', intval($_GET['rvn']));
         echo json_encode(array(
-            'profileRevision' => RVN,
+            'profileRevision' => 17306,
             'profileId' => 'campaign',
-            'profileChangesBaseRevision' => RVN,
+            'profileChangesBaseRevision' => 17305,
             'profileChanges' => [],
-            'profileCommandRevision' => RVN - 10,
+            'profileCommandRevision' => RVN + 1,
             'serverTime'=> current_zulu_time(),
             'responseVersion' => 1
         ));
