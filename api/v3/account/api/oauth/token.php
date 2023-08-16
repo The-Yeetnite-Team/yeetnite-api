@@ -39,7 +39,7 @@ switch ($_POST['grant_type']) {
         echo generate_token_data($user_data[0]['username'], $_POST['external_auth_token']);
         break;
     default:
-        echo generate_token_data('Yeetnite', substr(str_shuffle(MD5(microtime())), 0, 16));
+        echo generate_token_data('Yeetnite', bin2hex(random_bytes(8)));
         break;
 }
 
