@@ -6,18 +6,20 @@ header('Content-Type: application/json');
 // no opportunity for caching
 header('X-Litespeed-Cache-Control: no-store');
 
-$_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
+    $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+else parse_str(file_get_contents('php://input'), $_POST);
 
-define('RVN', intval($_GET['rvn']));
+$RVN = intval($_GET['rvn']);
 
 $database->update('locker', array('banner_icon', 'banner_color'), array($_POST['homebaseBannerIconId'], $_POST['homebaseBannerColorId']), "WHERE user_id IN (SELECT user_id FROM users WHERE username = '{$_GET['accountId']}')");
 
 header("X-LiteSpeed-Purge: private, tag=fullAccountInfo/{$_GET['accountId']}");
 
 echo json_encode(array(
-    'profileRevision' => RVN + 1,
+    'profileRevision' => $RVN + 1,
     'profileId' => 'athena',
-    'profileChangesBaseRevision' => RVN,
+    'profileChangesBaseRevision' => $RVN,
     'profileChanges' => array(
         array(
             'changeType' => 'statModified',

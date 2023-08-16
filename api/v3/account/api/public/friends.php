@@ -68,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("X-LiteSpeed-Purge: private, tag=friendsList/{$_GET['account_id_1']}, tag=friendsList/{$_GET['account_id_2']}");
 
     unfriend($_GET['account_id_1'], $_GET['account_id_2'], $database, $cache_provider);
-    unfriend($_GET['account_id_1'], $_GET['account_id_2'], $database, $cache_provider);
     update_friend_list_caches($_GET['account_id_1'], $_GET['account_id_2'], $cache_provider, $database);
 
     http_response_code(204);

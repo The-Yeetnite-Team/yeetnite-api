@@ -48,7 +48,7 @@ if (isset($_GET['fullAccountInfo'])) {
         'failedLoginAttempts' => 0,
         'lastLogin' => $current_zulu_time,
         'numberOfDisplayNameChanges' => 0,
-        'ageGroup' => 'UNKNOWN',
+        'ageGroup' => 'ADULT',
         'headless' => false,
         'country' => 'US',
         'preferredLanguage' => $user_data['preferredLanguage'],
@@ -57,15 +57,30 @@ if (isset($_GET['fullAccountInfo'])) {
         'emailVerified' => true,
         'minorVerified' => false,
         'minorExpected' => false,
-        'minorStatus' => 'UNKNOWN',
+        'minorStatus' => 'NOT_MINOR',
+        'cabinedMode' => false
     );
     echo json_encode($data);
     $data['lastLogin'] = ''; // faster to replace empty string in cache than using preg_replace()
     $cache_provider->set("full_user_data:{$_GET['accountId']}", json_encode($data));
 } else {
     if (substr_count($_SERVER['QUERY_STRING'], 'accountId') > 1) {
+        $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);
         $usernames = explode('&', strtr($_SERVER['QUERY_STRING'], array('accountId=' => '')));
-        echo '[' . implode(',', array_map('generate_minimal_account_info', $usernames)) . ']';
+        if ($version_info['season'] < 6) {
+            echo json_encode(
+                array(array(
+                    'id' => $usernames,
+                    'displayName' => $usernames,
+                    'minorVerified' => false,
+                    'externalAuths' => new stdClass(),
+                    'minorStatus' => 'NOT_MINOR',
+                    'cabinedMode' => false
+                ))
+            );
+        } else {
+            echo '[' . implode(',', array_map('generate_minimal_account_info', $usernames)) . ']';
+        }
     } else {
         echo generate_minimal_account_info($_GET['accountId']);
     }
@@ -77,7 +92,10 @@ function generate_minimal_account_info(string $username): string
         array(
             'id' => $username,
             'displayName' => $username,
+            'minorVerified' => false,
             'externalAuths' => new stdClass(),
+            'minorStatus' => 'NOT_MINOR',
+            'cabinedMode' => false
         )
     );
 }

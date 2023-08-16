@@ -4,11 +4,12 @@ require_once 'cache_provider.php';
 
 header('Content-Type: application/json');
 
-// a user could change their password, we don't wan't to cache the old password
-header('Cache-Control: no-store', TRUE);
-header('X-Litespeed-Cache-Control: no-cache');
+// a user could change their password, we don't want to cache the old password
+header('X-Litespeed-Cache-Control: no-store');
 
-parse_str(file_get_contents('php://input'), $_POST);
+if (str_contains($_SERVER['CONTENT_TYPE'], 'application/json'))
+    $_POST = json_decode(file_get_contents('php://input'), true) ?? array();
+else parse_str(file_get_contents('php://input'), $_POST);
 
 switch ($_POST['grant_type']) {
     // user logged in through the in-game login screen

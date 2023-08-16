@@ -2,6 +2,7 @@
 require_once 'database.php';
 
 header('Content-Type: application/json');
+header('X-Litespeed-Cache-Control: no-store');
 
 if (!isset($_GET['username']) || !isset($_GET['password'])) {
     echo json_encode(array('success' => false, 'reason' => 'We have received invalid data and are unable to receive your request'));

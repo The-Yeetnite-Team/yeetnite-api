@@ -1,5 +1,6 @@
 <?php
 require_once 'api-config.php';
+require_once 'cache_provider.php';
 
 // update the friends cache of two users using update_friend_cache()
 function update_friend_list_caches(string $user1, string $user2, CacheProvider $cache_provider, Database $database): void
