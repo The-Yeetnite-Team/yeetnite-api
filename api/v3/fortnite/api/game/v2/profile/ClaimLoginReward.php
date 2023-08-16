@@ -4,11 +4,11 @@ require_once 'lib/date_utils.php';
 header('Content-Type: application/json');
 
 $server_time = current_zulu_time();
-define('RVN', intval($_GET['rvn']));
+$RVN = intval($_GET['rvn']);
 echo json_encode(array(
-    'profileRevision' => RVN + 1,
+    'profileRevision' => $RVN + 1,
     'profileId' => 'campaign',
-    'profileChangesBaseRevision' => RVN,
+    'profileChangesBaseRevision' => $RVN,
     'profileChanges' => array(
         array(
             'changeType' => 'statModified',
@@ -25,7 +25,7 @@ echo json_encode(array(
             )
         )
     ),
-    'profileCommandRevision' => RVN - 9,
+    'profileCommandRevision' => $RVN - 9,
     'serverTime' => $server_time,
     'responseVersion' => 1
 ));

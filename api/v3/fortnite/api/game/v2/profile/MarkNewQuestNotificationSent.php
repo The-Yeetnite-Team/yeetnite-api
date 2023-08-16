@@ -3,13 +3,13 @@ require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
 
-define('RVN', intval($_GET['rvn']));
+$RVN = intval($_GET['rvn']);
 echo json_encode(array(
-    'profileRevision' => RVN,
+    'profileRevision' => $RVN,
     'profileId' => 'campaign',
-    'profileChangesBaseRevision' => RVN,
+    'profileChangesBaseRevision' => $RVN,
     'profileChanges' => [],
-    'profileCommandRevision' => RVN - 10,
+    'profileCommandRevision' => $RVN - 10,
     'serverTime' => current_zulu_time(),
     'responseVersion' => 1
 ));

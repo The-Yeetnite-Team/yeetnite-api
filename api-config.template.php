@@ -1,13 +1,13 @@
 <?php
-define('DB_HOST', 'abcd');
-define('DB_USERNAME', 'abcd');
-define('DB_PASSWORD', 'abcd');
-define('DB_NAME', 'abcd');
-define('MEMCACHED_HOST', 'abcd');
-define('MEMCACHED_PORT', 11211);
-define('TIGASE_API_KEY', 'abcd');
-define('TIGASE_HTTP_AUTHORIZATION', 'abcd');
-define('DEFAULT_MEMCACHED_KEYS', array(
+const DB_HOST = 'abcd';
+const DB_USERNAME = 'abcd';
+const DB_PASSWORD = 'abcd';
+const DB_NAME = 'abcd';
+const MEMCACHED_HOST = 'abcd';
+const MEMCACHED_PORT = 11211;
+const TIGASE_API_KEY = 'abcd';
+const TIGASE_HTTP_AUTHORIZATION = 'abcd';
+const DEFAULT_MEMCACHED_KEYS = array(
     'friend_request_error_self_accept' => '{"success":false,"reason":"You can\'t accept your own friend request"}',
     'content_api_pages_fortnite_game' => 'file|static/content_api_pages_fortnite_game.json',
     'fortnite_api_calendar_v1_timeline' => 'file|static/fortnite_api_calendar_v1_timeline.json',
@@ -25,4 +25,4 @@ define('DEFAULT_MEMCACHED_KEYS', array(
     'fortnite_api_game_v2_world_info' => 'file|static/fortnite_api_game_v2_world_info.json',
     'fortnite_api_storefront_v2_catalog' => 'file|static/fortnite_api_storefront_v2_catalog.json',
     'fortnite_api_storefront_v2_keychain' => 'file|static/fortnite_api_storefront_v2_keychain.json',
-));
+);
