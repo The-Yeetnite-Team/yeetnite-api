@@ -1,11 +1,8 @@
 <?php
 require_once 'database.php';
-require_once 'cache_provider.php';
 require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
-// client settings should always be fresh
-header('X-Litespeed-Cache-Control: no-store');
 
 if (!isset($_GET['accountId'])) {
     http_response_code(400);
@@ -17,12 +14,7 @@ if (!isset($_GET['accountId'])) {
 }
 
 if (isset($_GET['fileInfo'])) {
-    // Try to find file info in cache
-    $client_settings_info = $cache_provider->get("client_settings_file_info:{$_GET['accountId']}");
-    if ($client_settings_info) {
-        echo $client_settings_info;
-        return;
-    }
+    header("X-LiteSpeed-Tag: clientSettingsFileInfo/{$_GET['accountId']}");
 
     $client_settings_info = $database->select(array('clientSettings', 'clientSettingsLastUpdated'), 'users', "WHERE username = '{$_GET['accountId']}'")[0];
     if (!$client_settings_info['clientSettings']) {
@@ -35,26 +27,19 @@ if (isset($_GET['fileInfo'])) {
 } else {
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'PUT':
+            header("X-LiteSpeed-Purge: private, tag=rawClientSettings/{$_GET['accountId']}, tag=clientSettingsFileInfo/{$_GET['accountId']}");
+            header('X-Litespeed-Cache-Control: no-store');
+
             $client_settings = file_get_contents('php://input'); // raw version
             $client_settings_sav = base64_encode(gzdeflate($client_settings, 9)); // version stored in database
             $client_settings_last_updated = current_zulu_time();
             $database->update('users', array('clientSettings', 'clientSettingsLastUpdated'), array($client_settings_sav, $client_settings_last_updated), "WHERE username = '{$_GET['accountId']}'");
-            // Update fileInfo cache
-            $cache_provider->set("client_settings_file_info:{$_GET['accountId']}", client_settings_file_info($client_settings, $client_settings_last_updated));
-            $cache_provider->set("raw_client_settings:{$_GET['accountId']}", $client_settings);
             http_response_code(204);
             break;
         case 'GET':
             header('Content-Type: application/octet-stream');
+            header("X-LiteSpeed-Tag: rawClientSettings/{$_GET['accountId']}");
 
-            // Try to find client settings in cache
-            $client_settings = $cache_provider->get("raw_client_settings:{$_GET['accountId']}");
-            if ($client_settings) {
-                echo $client_settings;
-                return;
-            }
-
-            // Client settings weren't found in cache
             $client_settings_info = $database->select(array('clientSettings'), 'users', "WHERE username = '{$_GET['accountId']}'");
             if (!$client_settings_info) {
                 http_response_code(204);
