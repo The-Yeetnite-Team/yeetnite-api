@@ -45,9 +45,9 @@ switch ($_GET['profileId']) {
 
                 //! These offsets will have to be changed if the file changes
                 $athena_profile = substr_replace($athena_profile, '"created":"' . $CREATED_LAST_LOGIN['created'] . '"', 1, 12);
-                $athena_profile = substr_replace($athena_profile, "\"accountId\":\"{$_GET['accountId']}\"", -1751020, 14);
-                $athena_profile = substr_replace($athena_profile, '"updated":"' . $CREATED_LAST_LOGIN['lastLogin'] . '"', -102399, 12);
-                $athena_profile = substr_replace($athena_profile, "\"season_num\":{$version_info['season']}", -691, 15);
+                $athena_profile = substr_replace($athena_profile, '"updated":"' . $CREATED_LAST_LOGIN['lastLogin'] . '"', -1911875, 12);
+                $athena_profile = substr_replace($athena_profile, "\"accountId\":\"{$_GET['accountId']}\"", -1911839, 14);
+                $athena_profile = substr_replace($athena_profile, "\"season_num\":{$version_info['season']}", -751, 14);
 
                 // TODO somehow manage to use substr_replace for all of them (strtr is quite slow in comparison)
                 $athena_profile = strtr(
