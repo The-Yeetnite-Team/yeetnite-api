@@ -14,7 +14,7 @@ $RVN = intval($_GET['rvn']);
 
 $database->update('locker', array('banner_icon', 'banner_color'), array($_POST['homebaseBannerIconId'], $_POST['homebaseBannerColorId']), "WHERE user_id IN (SELECT user_id FROM users WHERE username = '{$_GET['accountId']}')");
 
-header("X-LiteSpeed-Purge: private, tag=fullAccountInfo/{$_GET['accountId']}");
+header("X-LiteSpeed-Purge: private, tag=fullAccountInfo/{$_GET['accountId']}, tag=queryProfileAthena/{$_GET['accountId']}");
 
 echo json_encode(array(
     'profileRevision' => $RVN + 1,

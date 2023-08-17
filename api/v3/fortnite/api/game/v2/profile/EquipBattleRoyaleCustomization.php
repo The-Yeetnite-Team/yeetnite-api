@@ -28,7 +28,7 @@ if ($IS_INDEXED_ITEM) {
 $database->update('locker', array('favorite_' . $LOCKER_ITEM_NAME), array($profile_changes),
     "WHERE user_id IN (SELECT user_id FROM users WHERE username = '{$_GET['accountId']}')");
 
-header("X-LiteSpeed-Purge: private, tag=fullAccountInfo/{$_GET['accountId']}");
+header("X-LiteSpeed-Purge: private, tag=fullAccountInfo/{$_GET['accountId']}, tag=queryProfileAthena/{$_GET['accountId']}");
 
 echo json_encode(array(
     'profileRevision' => $PROFILE_REVISION + 1,
