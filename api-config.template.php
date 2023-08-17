@@ -25,4 +25,8 @@ const DEFAULT_MEMCACHED_KEYS = array(
     'fortnite_api_game_v2_world_info' => 'file|static/fortnite_api_game_v2_world_info.json',
     'fortnite_api_storefront_v2_catalog' => 'file|static/fortnite_api_storefront_v2_catalog.json',
     'fortnite_api_storefront_v2_keychain' => 'file|static/fortnite_api_storefront_v2_keychain.json',
+    'api_v1_events_Fortnite' => 'file|static/api_v1_events_Fortnite.json',
+    'api_v1_fortnite-br_surfaces_motd_target' => 'file|static/api_v1_fortnite-br_surfaces_motd_target.json',
+    'fortnite_api_game_v2_profile_collections' => 'file|static/fortnite_api_game_v2_profile_collections.json',
+    'v1_epic-settings_public_users_values' => 'file|static/v1_epic-settings_public_users_values.json'
 );
