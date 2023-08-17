@@ -1,6 +1,7 @@
 RewriteEngine on
 
 RewriteRule ^api/v3/account/api/public/account/displayName/(.*)\.php$ /api/v3/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L,QSA]
+RewriteRule ^api/v3/account/api/public/account/.*/externalAuths\.php$ /api/v3/account/api/public/externalAuths.php [L]
 RewriteRule ^api/v3/account/api/public/account/(.*)\.php$ /api/v3/account/api/public/account.php?fullAccountInfo=1&accountId=$1 [L,QSA]
 RewriteRule ^api/v3/friends/api/public/friends/(.*)/(.*)\.php$ /api/v3/account/api/public/friends.php?account_id_1=$1&account_id_2=$2 [L,QSA]
 RewriteRule ^api/v3/fortnite/api/cloudstorage/(.*)/config\.php$ /api/v3/fortnite/api/cloudstorage/$1/config.php [L,QSA]
@@ -18,7 +19,7 @@ RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/IncrementNamedCounter
 RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/MarkNewQuestNotificationSent\.php$ /api/v3/fortnite/api/game/v2/profile/MarkNewQuestNotificationSent.php [L,QSA]
 RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/RefreshExpeditions\.php$ /api/v3/fortnite/api/game/v2/profile/RefreshExpeditions.php?accountId=$1 [L,QSA]
 RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/SetBattleRoyaleBanner\.php$ /api/v3/fortnite/api/game/v2/profile/SetBattleRoyaleBanner.php?accountId=$1 [L,QSA]
-RewriteRule ^api/v3/fortnite/api/game/v2/profile/.*/client/SetMtxPlatform\.php$ /api/v3/fortnite/api/game/v2/profile/SetMtxPlatform.php [L,QSA]
+RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/SetMtxPlatform\.php$ /api/v3/fortnite/api/game/v2/profile/SetMtxPlatform.php?accountId=$1 [L,QSA]
 RewriteRule ^api/v3/fortnite/api/game/v2/profile/(.*)/client/QueryProfile\.php$ /api/v3/fortnite/api/game/v2/profile/QueryProfile.php?accountId=$1 [L,QSA]
 RewriteRule ^api/v3/fortnite/api/matchmaking/session/.*/join\.php$ /api/v3/fortnite/api/matchmaking/session/join.php [L,QSA]
 RewriteRule ^api/v3/fortnite/api/matchmaking/session/findPlayer/.*\.php$ /api/v3/fortnite/api/matchmaking/session/findPlayer.php [L,QSA]
