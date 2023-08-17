@@ -3,6 +3,7 @@ require_once 'database.php';
 require_once 'lib/friend_utils.php';
 
 header('Content-Type: application/json');
+header('X-Litespeed-Cache-Control: no-store');
 
 $friends = $database->raw(
     <<<EOL

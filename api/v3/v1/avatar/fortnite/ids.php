@@ -2,6 +2,7 @@
 require_once 'database.php';
 
 header('Content-Type: application/json');
+header('X-Litespeed-Cache-Control: no-store');
 
 $account_ids = explode(',', $_GET['accountIds']);
 

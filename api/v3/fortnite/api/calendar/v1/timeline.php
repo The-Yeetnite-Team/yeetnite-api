@@ -4,6 +4,7 @@ require_once 'lib/season_utils.php';
 require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
+header('X-Litespeed-Cache-Control: no-store'); // OLS doesn't differentiate by headers
 
 $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);
 $event_flag_season = "EventFlag.Season{$version_info['season']}";
