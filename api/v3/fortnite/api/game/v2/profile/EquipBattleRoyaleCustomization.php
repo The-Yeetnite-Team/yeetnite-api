@@ -14,7 +14,9 @@ else parse_str(file_get_contents('php://input'), $_POST);
 
 $PROFILE_REVISION = intval($_GET['rvn']);
 $LOCKER_ITEM_NAME = strtolower($_POST['slotName']);
-$IS_INDEXED_ITEM = in_array($LOCKER_ITEM_NAME, array('itemwrap', 'dance'));
+
+const INDEXED_ITEMS_LIST = array('itemwrap', 'dance');
+$IS_INDEXED_ITEM = in_array($LOCKER_ITEM_NAME, INDEXED_ITEMS_LIST);
 
 $profile_changes = $_POST['itemToSlot'];
 

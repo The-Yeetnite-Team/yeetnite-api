@@ -1,4 +1,5 @@
 <?php
+/** @noinspection DuplicatedCode */
 require_once 'database.php';
 require_once 'lib/date_utils.php';
 

@@ -59,14 +59,14 @@ if (isset($_GET['fileInfo'])) {
 
 function client_settings_file_info($client_settings, $last_updated): string {
     return json_encode(array(
-        "uniqueFilename" => "ClientSettings.Sav",
-        "fileName" => "ClientSettings.Sav",
-        "hash" => hash('sha1', $client_settings),
-        "hash256" => hash('sha256', $client_settings),
-        "length" => strlen($client_settings),
-        "contentType" => "application/octet-stream",
-        "uploaded" => $last_updated,
-        "storageType" => "S3",
-        "doNotCache" => true
+        'uniqueFilename' => 'ClientSettings.Sav',
+        'fileName' => 'ClientSettings.Sav',
+        'hash' => hash('sha1', $client_settings),
+        'hash256' => hash('sha256', $client_settings),
+        'length' => strlen($client_settings),
+        'contentType' => 'application/octet-stream',
+        'uploaded' => $last_updated,
+        'storageType' => 'S3',
+        'doNotCache' => true
     ));
 }
