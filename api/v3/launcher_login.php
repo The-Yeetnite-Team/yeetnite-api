@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 header('X-Litespeed-Cache-Control: no-store');
 
 if (!isset($_GET['username']) || !isset($_GET['password'])) {
+    header('X-Litespeed-Cache-Control: private');
     echo json_encode(array('success' => false, 'reason' => 'We have received invalid data and are unable to receive your request'));
     return;
 }
