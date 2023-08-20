@@ -60,4 +60,4 @@ class Database {
     }
 }
 
-$database = new Database();
+static $database = new Database();

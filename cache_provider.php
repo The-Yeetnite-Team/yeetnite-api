@@ -35,4 +35,4 @@ class CacheProvider {
     }
 }
 
-$cache_provider = new CacheProvider();
+static $cache_provider = new CacheProvider();
