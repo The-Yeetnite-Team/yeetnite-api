@@ -7,18 +7,8 @@ require_once 'lib/date_utils.php';
 header('Content-Type: application/json');
 
 if (isset($_GET['fullAccountInfo'])) {
-    header("X-LiteSpeed-Tag: fullAccountInfo/{$_GET["accountId"]}");
     $current_zulu_time = current_zulu_time();
 
-    // huge time savings if we find user data in cache
-    $user_data = $cache_provider->get("full_user_data:{$_GET["accountId"]}");
-    if ($user_data) {
-        // Update user's last login time and return cached data
-        echo strtr($user_data, array('"lastLogin":""' => "\"lastLogin\":\"$current_zulu_time\""));
-        return;
-    }
-
-    // the user is not in our cache yet, continuing...
     $user_data = $database->select(array('lastLogin', 'email', 'username', 'preferredLanguage'), 'users', "WHERE username='{$_GET['accountId']}'");
 
     if (!$user_data) {
@@ -32,6 +22,7 @@ if (isset($_GET['fullAccountInfo'])) {
         return;
     }
 
+    header("X-LiteSpeed-Tag: fullAccountInfo/{$_GET["accountId"]}");
 
     if (!$database->update('users', array('lastLogin'), array($current_zulu_time), "WHERE username='{$_GET['accountId']}'")) {
         echo 'Failed to update last login time';
@@ -61,8 +52,6 @@ if (isset($_GET['fullAccountInfo'])) {
         'cabinedMode' => false
     );
     echo json_encode($data);
-    $data['lastLogin'] = ''; // faster to replace empty string in cache than using preg_replace()
-    $cache_provider->set("full_user_data:{$_GET['accountId']}", json_encode($data));
 } else {
     if (substr_count($_SERVER['QUERY_STRING'], 'accountId') > 1) {
         $version_info = fortnite_version_info($_SERVER['HTTP_USER_AGENT']);

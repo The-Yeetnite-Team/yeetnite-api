@@ -4,6 +4,8 @@ require_once 'cache_provider.php';
 require_once 'lib/date_utils.php';
 
 header('Content-Type: application/json');
+// OLS doesn't cache based on headers
+header('X-Litespeed-Cache-Control: no-store');
 
 $build_id = strtr(explode('/', $_SERVER['HTTP_USER_AGENT'])[1], array(' Windows' => '-Windows'));
 
