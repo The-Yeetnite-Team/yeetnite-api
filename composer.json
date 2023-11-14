@@ -1,0 +1,24 @@
+{
+    "name": "the-yeetnite-team/yeetnite_api",
+    "description": "Yeetnite PHP API",
+    "type": "project",
+    "license": "SEE LICENSE IN LICENSE",
+    "autoload": {
+        "psr-4": {
+        }
+    },
+    "authors": [
+        {
+            "name": "Antonios Papadakis",
+            "email": "bdpaboi123@gmail.com"
+        }
+    ],
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^10.4",
+        "guzzlehttp/guzzle": "^7.8"
+    }
+}

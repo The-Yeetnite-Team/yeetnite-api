@@ -2,7 +2,13 @@
 const DB_HOST = 'abcd';
 const DB_USERNAME = 'abcd';
 const DB_PASSWORD = 'abcd';
-const DB_NAME = 'abcd';
+
+if (file_exists(dirname(__FILE__) . "/testing_mode")) {
+    define('DB_NAME', 'test_db_name');
+} else {
+    define('DB_NAME', 'db_name');
+}
+
 const MEMCACHED_HOST = 'abcd';
 const MEMCACHED_PORT = 11211;
 const TIGASE_API_KEY = 'abcd';

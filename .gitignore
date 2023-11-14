@@ -11,3 +11,6 @@ certs**
 
 # API temporary files when in use
 cached.true
+
+/vendor/
+.phpunit.result.cache
