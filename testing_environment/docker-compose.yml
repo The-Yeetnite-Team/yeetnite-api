@@ -11,12 +11,9 @@ services:
       - ./lsws/admin-conf:/usr/local/lsws/admin/conf
       - ./bin/container:/usr/local/bin
       - ../:/usr/local/lsws/conf/vhosts/yeetnite_api/site
-    links:
-      - memcached
     ports:
       - 80:80
       - 443:443
-      - 7080:7080
     restart: always
     environment:
       TZ: ${TimeZone}
@@ -26,16 +23,8 @@ services:
           memory: 4096M
     networks:
       - default
-  memcached:
-    image: memcached:1.6.22-alpine3.18
-    networks:
-      - default
-    logging:
-      driver: none
-    deploy:
-      resources:
-        limits:
-          memory: 512M
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 networks:
   default:
     driver: bridge
