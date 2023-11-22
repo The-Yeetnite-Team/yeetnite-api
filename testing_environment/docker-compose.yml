@@ -15,8 +15,8 @@ services:
     links:
       - memcached
     ports:
-      - 80:80
-      - 443:443
+      - 880:80
+      - 8443:443
     restart: always
     environment:
       TZ: ${TimeZone}
