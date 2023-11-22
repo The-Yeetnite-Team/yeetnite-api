@@ -2,6 +2,7 @@ version: '3'
 services:
   litespeed:
     image: litespeedtech/openlitespeed:1.7.18-lsphp81
+    container_name: yeetnite_webserver
     logging:
       driver: none
     env_file:
@@ -27,6 +28,7 @@ services:
       - default
   memcached:
     image: memcached:1.6.22-alpine3.18
+    container_name: yeetnite_memcached
     networks:
       - default
     logging:
