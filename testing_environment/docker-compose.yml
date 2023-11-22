@@ -15,7 +15,7 @@ services:
     links:
       - memcached
     ports:
-      - 880:80
+      - 1880:80
       - 8443:443
     restart: always
     environment:
