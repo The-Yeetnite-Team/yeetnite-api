@@ -5,8 +5,6 @@ services:
     container_name: yeetnite_webserver
     logging:
       driver: none
-    env_file:
-      - .env
     volumes:
       - ./lsws/conf:/usr/local/lsws/conf
       - ./lsws/admin-conf:/usr/local/lsws/admin/conf
