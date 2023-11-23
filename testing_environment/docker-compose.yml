@@ -19,7 +19,12 @@ services:
       - 8443:443
     restart: always
     environment:
-      TZ: ${TimeZone}
+      TZ: America/New_York
+      DB_HOST: ${DB_HOST}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      TIGASE_API_KEY: ${TIGASE_API_KEY}
+      TIGASE_HTTP_AUTHORIZATION: ${TIGASE_HTTP_AUTHORIZATION}
     deploy:
       resources:
         limits:

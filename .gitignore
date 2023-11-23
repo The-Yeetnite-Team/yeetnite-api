@@ -1,5 +1,5 @@
 # Sensitive keys
-api-config.php
+api-config-prod.php
 
 # Self-signed SSL Certificates
 certs**
@@ -14,3 +14,4 @@ cached.true
 
 /vendor/
 .phpunit.result.cache
+testing_environment/.env

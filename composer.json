@@ -14,7 +14,8 @@
         }
     ],
     "scripts": {
-        "test": "./vendor/bin/phpunit"
+        "test": "./vendor/bin/phpunit --testdox",
+        "teamcity": "./vendor/bin/phpunit --teamcity"
     },
     "minimum-stability": "stable",
     "require-dev": {
